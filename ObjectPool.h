@@ -1,10 +1,7 @@
 #pragma once
+#include "Common.h"
 
-#include <iostream>
-#include <vector>
-#include <ctime>
-using std::cout;
-using std::endl;
+static const size_t FIXED_BLOCK_SIZE = 128 * 1024; // 固定大小内存池分配128KB
 
 // 定长的内存池
 template<class T>
@@ -26,7 +23,7 @@ public:
 		{
 			if (_leftBytes < sizeof(T)) // 剩余内存不够一个对象大小时，重新分配一块大内存
 			{
-				_leftBytes = 128 * 1024;
+				_leftBytes = FIXED_BLOCK_SIZE;
 				_memory = (char*)malloc(_leftBytes);
 				if (_memory == nullptr)
 					throw std::bad_alloc();
@@ -37,7 +34,7 @@ public:
 			_memory += objSize;
 			_leftBytes -= objSize;
 
-			// 定位new , 显示调用T的构造函数初始化
+			// 定位new , 显示调用T的构造函数 初始化
 			new(obj)T;
 			return obj;
 		}
